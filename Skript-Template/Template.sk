@@ -134,7 +134,13 @@ command smpname:
                 set {-cooldown::%uuid of player%::2} to 0
             else if arg-1 is "give":
                 give_item(player)
+			else if arg-1 is "reroll":
+				reroll(player)
 
+
+on tab complete for "/change-this-to-the-name-of-your-command-make-sure-all-lower-case":
+	if player has op:
+		set tab completions for position 1 to "clearCooldowns", "give", "reroll"
 
 # GUIS / GUI LOGIC Made with sk editor https://www.spigotmc.org/resources/skeditor.108251/
 local function give_item(p: player):
@@ -181,3 +187,14 @@ local function circle(radius: number, location: location, fromcolor: color, toco
 #		the first one is radius 2nd is location 3rd is the start color 4th is the color it fades to 5th is the amount of the particles drawn, 6 is the spread / vector
 #		circle(4, location of player, red, blue, 4, 1, vector(0.1,0.1,0.1))
 
+
+
+local function reroll(p: player):
+	set {_elements::*} to "ice", "fire", "shit"
+	loop 8 times:
+		wait 2 ticks
+		set {_r} to a random element out of {_elements::*}
+		send title {_r} with subtitle "tuff" to {_p} for 2 seconds
+	set {Ability::%uuid of {_p}%} to {_r} 
+
+	# VERY LOW EFFORT REROLL FUNCTION!!!
