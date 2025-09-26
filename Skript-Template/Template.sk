@@ -24,6 +24,10 @@ local function stun(e: entity, n: number):
 		else:
 			stop
 
+on disconnect:
+	set {_p} to player
+	delete {-cooldown::%uuid of {_p}%::1}
+	delete {-cooldown::%uuid of {_p}%::2}
 
 
 on join:
