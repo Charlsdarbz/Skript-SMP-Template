@@ -1,0 +1,18 @@
+{
+    "providers": [
+        {
+            "type": "bitmap",
+            "file": "minecraft:icons/template_16x16.png",
+            "ascent": 13,
+            "height": 25,
+            "chars": ["🍠"]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:icons/template_32x32.png",
+            "ascent": 13,
+            "height": 25,
+            "chars": ["🫡"]
+        }
+    ]
+}

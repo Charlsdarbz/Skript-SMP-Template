@@ -1,0 +1,110 @@
+Here is documentation for your Skript SMP Plugin Template by Darbz. This guide explains the main features, usage, and customization points for your Skript code.
+
+---
+
+# Skript SMP Plugin Template Documentation
+
+## Overview
+
+This Skript template provides a foundation for a Minecraft SMP plugin, including:
+- Entity blacklisting for damage prevention
+- Custom item setup
+- Player trust system with commands
+- Ability system with cooldowns
+- GUI for item giving
+- Utility functions (e.g., stun, particle effects)
+
+---
+
+## Features
+
+### 1. Entity Blacklist on Load
+
+- On server load, adds "villager" and "turtle" to a blacklist variable (`{-BlackList::*}`).
+- Sets up a custom item (stick with name, lore, and enchantment glint) in `{-Items::1}`.
+
+### 2. Damage Prevention
+
+- Cancels damage events for entities in the blacklist if the damage is caused by the plugin.
+
+### 3. Stun Utility
+
+- `stun(entity, number)`: Teleports the entity to itself every tick for the given number of ticks (as long as it's alive), effectively "stunning" it.
+
+### 4. Player Join Initialization
+
+- On player join, initializes cooldown variables for two abilities.
+- Continuously decreases cooldowns every second while the player is online.
+
+### 5. Trust System
+
+#### Command: `/trust [add|remove|list] [player]`
+
+- **add**: Adds a player to your trust list if not already trusted and not yourself.
+- **remove**: Removes a player from your trust list.
+- **list**: Lists all trusted players.
+- Tab completion is provided for command arguments.
+
+#### Variables:
+- `{-TL::%uuid of player%::*}`: Stores UUIDs of trusted players.
+- `{-TLN::%uuid of player%::*}`: Stores names of trusted players.
+
+#### Usage Example:
+- `/trust add <player>`
+- `/trust remove <player>`
+- `/trust list`
+
+### 6. Ability System
+
+#### Command: `/ability <1|2>`
+
+- Triggers the player's ability if set and not on cooldown.
+- Cooldowns are managed per player and ability slot.
+
+#### Function: `doAbility(player, string, number)`
+
+- Placeholder for custom ability logic.
+- Customize the ability name and actions in this function.
+
+### 7. Admin Command
+
+#### Command: `/smpname <clearCooldowns|give>`
+
+- `clearCooldowns`: Resets the player's ability cooldowns (OP only).
+- `give`: Opens the item GUI for the player.
+
+### 8. Item GUI
+
+- Function `give_item(player)` opens a custom chest GUI with items.
+- Items are displayed as stone by default; customize as needed.
+- Clicking an item gives it to the player and plays a sound.
+
+### 9. Particle Effects
+
+#### Function: `circle(radius, location, fromcolor, tocolor, amount, size, spread)`
+
+- Draws a circle of colored particles with a color transition.
+- Example usage (uncommented in code):
+	```
+	#circle(4, location of player, red, blue, 4, 1, vector(0.1,0.1,0.1))
+	```
+
+---
+
+## Customization
+
+- **Abilities**: Edit the `doAbility` function to add your own ability logic.
+- **Items**: Change the items in `give_item` to your custom items.
+- **Blacklist**: Add or remove entity types in the blacklist as needed.
+- **Particle Effects**: Use the `circle` function for custom visual effects.
+
+---
+
+## Notes
+
+- Trust lists are stored per player using UUIDs.
+- The GUI and particle functions use Skript's advanced features; ensure your server has the required Skript addons.
+
+---
+
+For further customization, edit the relevant sections in your Skript file. If you need more advanced features, consider using Skript addons or integrating with other plugins.

@@ -1,0 +1,182 @@
+#SKRIPT SMP PLUGIN TEMPLATE BY DARBZ
+
+
+on load:
+    add "minecraft:villager", "minecraft:turtle" to {-BlackList::*}
+    set {-Items::1} to stick named "&cName here" with lore "Lore Here" with enchantment glint
+
+
+# Util
+on damage:
+	loop {-BlackList::*}:
+		"%victim.getType()%" is "%loop-value%"
+		damage is caused by plugin
+		cancel event
+				# the person its stunning
+				#    		how long it lasts in ticks 100 ticks is 5 seconds
+# HOW TO USE -> stun(%entity%, %number%)
+local function stun(e: entity, n: number):
+	loop {_n} times:
+		wait 1 tick
+		if {_e} is alive:
+			teleport {_e} to {_e}
+		else:
+			stop
+
+
+
+on join:
+    set {_p} to player
+	set {-cooldown::%uuid of {_p}%::1} to 0
+	set {-cooldown::%uuid of {_p}%::2} to 0
+    while player is online:
+        if {-cooldown::%uuid of {_p}%::1} > 0:
+            remove 1 from {-cooldown::%uuid of {_p}%::1}
+
+        if {-cooldown::%uuid of {_p}%::2} > 0:
+            remove 1 from {-cooldown::%uuid of {_p}%::2}
+        wait 1 second
+        
+# Use {-TL::%uuid of {_p}%::*} does not contain %entities% to check if someone isnt in your trustlist
+
+# Commands
+command trust [<text>] [<offlineplayer>] [<text>]:
+	trigger:
+		set {_p} to player
+		set {_p2} to arg-2
+		if arg-1 is "add":
+			if arg-2 is set:
+				if name of {_p2} is not name of {_p}:
+					if uuid of {_p2} does not contain {-TL::%uuid of {_p}%::*}:
+						add uuid of {_p2} to {-TL::%uuid of {_p}%::*}
+						add name of {_p2} to {-TLN::%uuid of {_p}%::*}
+						send "&aAdded %name of {_p2}% To Your Trustlist" to {_p}
+						SaveTrust({_p})
+					else:
+						send "&cThat Player Is Already Trusted." to {_p}
+				else:
+					send "&cYou Cannot Trust Yourself." to {_p}
+
+
+			else:
+				send "&4Please Select A Player &7-&r &8/trust add <player>"
+
+
+
+		if arg-1 is "remove":
+			if arg-2 is set:
+				if {-TL::%uuid of {_p}%::*} contains uuid of {_p2}:
+					remove uuid of {_p2} from {-TL::%uuid of {_p}%::*}
+					remove {_p2} from {-TLN::%uuid of {_p}%::*}
+					send "&aRemoved %name of {_p2}% From Your Trustlist." to {_p}
+					SaveTrust({_p})
+
+				else:
+					send "&4That Player Is Not Trusted."
+
+			else:
+				send "&4Please Select A Player &7-&r &8/trust remove <TrustedPlayer>"
+
+		if arg-1 is "list":
+			if size of {-TL::%uuid of {_p}%::*} <= 0:
+				send "&cYou Have 0 Player(s) Trusted." to {_p}
+			else:
+				send "&aYou have &8-&r &7%{-TLN::%uuid of {_p}%::*}%&r&a added to your trustlist." to {_p}
+
+
+on tab complete for "/trust":
+	set tab completions for position 1 to "add", "list", "remove"
+	if tab arg-1 is "add":
+		set tab completions for position 2 to players
+	if tab arg-1 is "remove":
+		set tab completions for position 2 to players
+
+command ability <text>:
+	trigger:
+		set {_p} to player
+		if arg-1 is "1":
+			if {Ability::%uuid of {_p}%} is set:
+				if {-cooldown::%uuid of {_p}%::1} <= 0:
+					doAbility({_p}, {Ability::%uuid of {_p}%}, 1)
+				else:
+					send "&cAbility On Cooldown &8| &e%{-cooldown::%uuid of {_p}%::1}%&r&c Seconds Remaining" to {_p}
+
+			else:
+				send "&cYou Do Not Have An Ability" to {_p}
+		if arg-1 is "2":
+			if {Ability::%uuid of {_p}%} is set:
+				if {-cooldown::%uuid of {_p}%::2} <= 0:
+                    # Make sure the Ability variable matches what you put in the if statement in the doAbility() function 
+					doAbility({_p}, {Ability::%uuid of {_p}%}, 2)
+				else:
+					send "&cAbility On Cooldown &8| &e%{-cooldown::%uuid of {_p}%::2}%&r&c Seconds Remaining" to {_p}
+
+			else:
+				send "&cYou Do Not Have An Ability" to {_p}
+
+
+function doAbility(p: player, s: string, num: number):
+    {_s} is "Change this to your ability name":
+        {_num} is 1:
+            # DO SOMETHING
+
+	{_s} is "Change this to your 2nd ability name if you have one if not remove this line":
+		{_num} is 2:
+			# DO SOME THING
+
+command smpname:
+    trigger:
+        if player has op:
+            if arg-1 is "clearCooldowns":
+                send "&eCleared You Cooldowns" to player
+                set {-cooldown::%uuid of player%::1} to 0
+                set {-cooldown::%uuid of player%::2} to 0
+            else if arg-1 is "give":
+                give_item(player)
+
+
+# GUIS / GUI LOGIC Made with sk editor https://www.spigotmc.org/resources/skeditor.108251/
+local function give_item(p: player):
+	set {_gui} to chest inventory with 2 rows named "&4&lꜱᴍᴘ ɴᴀᴍᴇ &7&lɪᴛᴇᴍꜱ"
+
+	set slot (integers between 0 and 18) of {_gui} to gray stained glass pane named "&7"
+	set slot 0 of {_gui} to stone named "item" # YOUR ITEMS GO HERE
+	set slot 1 of {_gui} to stone named "item"
+	set slot 2 of {_gui} to stone named "item"
+	set slot 3 of {_gui} to stone named "item"
+	set slot 4 of {_gui} to stone named "item"
+	set slot 5 of {_gui} to stone named "item"
+	set slot 6 of {_gui} to stone named "item"
+	set slot 7 of {_gui} to stone named "item"
+	set slot 8 of {_gui} to stone named "item"
+	set slot 10 of {_gui} to stone named "item"
+	set slot 11 of {_gui} to stone named "item"
+	set slot 12 of {_gui} to stone named "item"
+	set slot 13 of {_gui} to stone named "item"
+	set slot 14 of {_gui} to stone named "item"
+	set slot 15 of {_gui} to stone named "item"
+	set slot 16 of {_gui} to stone named "item"
+	open {_gui} to {_p}
+
+on inventory click:
+	name of event-inventory is "&4&lꜱᴍᴘ ɴᴀᴍᴇ &7&lɪᴛᴇᴍꜱ"
+	cancel event
+	event-inventory is not player's inventory
+    give event-item to player if {-Items::*} contains event-Items
+    play sound "entity.armadillo.scute_drop" with volume 1 to player
+
+
+
+# Particle Stuff
+local function circle(radius: number, location: location, fromcolor: color, tocolor: color, amount: number, size: number, spread: vector):
+	loop 36 times:
+		set {_v} to spherical vector with radius {_radius}, yaw loop-value*10, pitch 0
+		draw {_amount} of dust_color_transition using dustTransition({_fromcolor}, {_tocolor}, {_size}) at {_location} ~ {_v} with offset {_spread} with force
+
+# HOW TO USE v-v-v
+
+#command test:
+#	trigger:
+#		the first one is radius 2nd is location 3rd is the start color 4th is the color it fades to 5th is the amount of the particles drawn, 6 is the spread / vector
+#		circle(4, location of player, red, blue, 4, 1, vector(0.1,0.1,0.1))
+
